@@ -1,0 +1,14 @@
+#ifndef EXITCODES_HPP
+#define EXITCODES_HPP
+
+enum ExitCodes
+{
+	NORMAL = 0,
+	OK = 0,
+	HELP,
+	DEBUG,
+	MAIN_RUNTIME_ERROR,
+	NO_CONFIG_FILE
+};
+
+#endif // EXITCODES_HPP
