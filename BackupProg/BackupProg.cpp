@@ -12,9 +12,11 @@
 
 /* Boost */
 #include <boost/program_options.hpp> // boost::program_options::options_description,  boost::program_options::positional_options_description, boost::program_options::store, boost::program_options::command_line_parser, boost::program_options::notify, boost::program_options::value
+#include <boost/thread.hpp> // boost::thread
 
 /* Macros to control whether we use Boost or the standard library when the standard library is based on Boost */
 #include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
+#include "bosmacros/thread.hpp" // THREAD_HARDWARE_CONCURRENCY
 
 /* Our headers */
 #include "ExitCodes.hpp" // Exit codes
@@ -62,13 +64,16 @@ int main(int argc, char* argv[])
 
     try
     {
+        static unsigned int numCores = THREAD_HARDWARE_CONCCURRENCY(); //  Fetch the # of cores
+
         FILESYSTEM_PATH backupDrivePath = vm["backup-drive"].as<FILESYSTEM_PATH>();
         FILESYSTEM_PATH confFilePath(backupDrivePath); // Path to config file. Starts with backup drive
         confFilePath /= vm["config-file"].as<FILESYSTEM_PATH>(); // Add relative path to config file
 
 #ifdef _DEBUG
         std::clog << "Path to backup drive: " << backupDrivePath << std::endl
-            << "Path to config file: " << confFilePath << std::endl;
+            << "Path to config file: " << confFilePath << std::endl
+            << "Number of cores: " << numCores << std::endl;
 #endif // _DEBUG
 
         if (FILESYSTEM_EXISTS(confFilePath)) // Config file exists
@@ -76,7 +81,7 @@ int main(int argc, char* argv[])
 #ifdef _DEBUG
             std::clog << "Config file " << confFilePath << " exists." << std::endl;
 #endif // _DEBUG
-            ConfigHandler ch(confFilePath);
+            ConfigHandler ch(confFilePath); // Load our config values by parsing the config file
 
             /* Backup each drive  that's listed in parallel */
             return NORMAL;
