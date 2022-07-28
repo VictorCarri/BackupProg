@@ -36,7 +36,7 @@
 			* \desc Reads the entire file into a string.
 			* \param strm A reference to the stream to read.
 			*/
-			void readFileIntoString(IFSTREAM& strm);
+			void readFileIntoString(FILESYSTEM_IFSTREAM& strm);
 
 			std::string fConts; // Holds the JSON as a string for Boost.JSON
 			boost::json::value options; // Our options

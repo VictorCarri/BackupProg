@@ -89,6 +89,13 @@ int main(int argc, char* argv[])
         }
     }
 
+    catch (FILESYSTEM_ERROR fe)
+    {
+        std::cerr << "main: caught filesystem error." << std::endl
+            << "\t" << fe.what() << std::endl;
+        return MAIN_FILESYSTEM_ERROR;
+    }
+
     catch (std::runtime_error& sre)
     {
         std::cerr << "main: caught runtime error." << std::endl

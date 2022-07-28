@@ -21,7 +21,7 @@ ConfigHandler::ConfigHandler(FILESYSTEM_PATH confFilePath)
 {
 	try
 	{
-		IFSTREAM cfStrm(confFilePath); // Open the file
+		FILESYSTEM_IFSTREAM cfStrm(confFilePath); // Open the file
 		readFileIntoString(cfStrm); // Read the file's contents
 		options = boost::json::parse(fConts); // Parse the file's contents as JSON
 		storeLastBackupTime();
@@ -41,7 +41,7 @@ ConfigHandler::ConfigHandler(FILESYSTEM_PATH confFilePath)
 * \desc Reads the entire file into a string.
 * \param strm A reference to the stream to read.
 */
-void ConfigHandler::readFileIntoString(IFSTREAM& strm)
+void ConfigHandler::readFileIntoString(FILESYSTEM_IFSTREAM& strm)
 {
 	std::ostringstream fcss; // For 'f'ile 'c'ontents
 	fcss << strm.rdbuf(); // Read the entire file
@@ -67,15 +67,14 @@ boost::json::value ConfigHandler::getOpts() const
 */
 void ConfigHandler::storeLastBackupTime()
 {
-	/* Get the string data */
-	boost::json::object& obj = options.as_object(); // Fetch the options as an object
-	boost::json::value& lastBackupTimeVal = obj["lastBackupTime"]; // Fetch the last backup time as a value
-	boost::json::string& lastBackupTimeStr = lastBackupTimeVal.as_string(); // Fetch the last backup time as a JSON string
-	char const* lastBackupTimeArr = lastBackupTimeStr.data(); // Get the string data
-
-#ifdef _DEBUG
-	std::clog << "ConfigHandler::storeLastBackupTime: last backup time string = \"" << lastBackupTimeArr << "\"" << std::endl;
-#endif // _DEBUG
-
-	/* Convert the string data to a time point object*/
+	/*
+	* TODO: Check if the JSON object has a last backup time.
+	* 
+	* 1) If there isn't a backup time: // First time the drive was used
+	*	a) Add a backup time string to the JSON object.
+	*	b) Ask the user to provide a date. Assume that the time is midnight.
+	*	c) Convert this to the time object to compare against.
+	* 2) If there is a backup time string:
+	*	a) Convert it to a time object to compare against.
+	*/
 }
