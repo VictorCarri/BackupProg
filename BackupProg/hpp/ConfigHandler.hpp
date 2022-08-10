@@ -5,6 +5,9 @@
 	#include <string> // std::string
 	#include <boost/json.hpp> // boost::json::value
 
+	/* STL versions of C headers */
+	#include <ctime> // std::tm
+
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH, IFSTREAM
 
@@ -44,6 +47,7 @@
 
 			std::string fConts; // Holds the JSON as a string for Boost.JSON
 			boost::json::value options; // Our options
+			std::tm lastBackupTime; // Holds the last time the backup was run
 	};
 
 #endif //sCONFIGFILEPARSER_HPP
