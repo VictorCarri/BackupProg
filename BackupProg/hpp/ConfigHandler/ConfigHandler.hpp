@@ -33,7 +33,7 @@
 			*/
 			boost::json::value getOpts() const;
 
-		private:
+		protected:
 			/*
 			* \desc Converts the last backup time stored in the JSON into a C++ time point.
 			*/

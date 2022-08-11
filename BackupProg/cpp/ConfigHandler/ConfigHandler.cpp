@@ -14,7 +14,7 @@
 #include <boost/json.hpp> // boost::json::parse, boost::json::value, boost::json::object, boost::json::string
 
 /* Our headers */
-#include "ConfigHandler.hpp" // Class def'n
+#include "ConfigHandler/ConfigHandler.hpp" // Class def'n
 
 /*
 * Constructor. Reads the entire JSON file in as a string, then uses Boost.JSON to parse it as JSON and save it.

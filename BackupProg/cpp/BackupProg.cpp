@@ -18,8 +18,13 @@
 
 /* Our headers */
 #include "ExitCodes.hpp" // Exit codes
-#include "ConfigHandler.hpp" // Task class to parse our JSON config file and store the loaded JSON for later use
-#include "DriveBackupMaker.hpp" // Task class to backup a drive
+
+#if defined(WINDOWS_BUILD)
+    #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
+
+#elif defined(LINUX_BUILD)
+#include "ConfigHandler/LinuxConfigHandler.hpp"
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -67,16 +72,21 @@ int main(int argc, char* argv[])
         confFilePath /= vm["config-file"].as<FILESYSTEM_PATH>(); // Add relative path to config file
 
 #ifdef _DEBUG
-        std::clog << "Path to backup drive: " << backupDrivePath << std::endl
-            << "Path to config file: " << confFilePath << std::endl;
+        std::clog << "main: Path to backup drive: " << backupDrivePath << std::endl
+            << "main: Path to config file: " << confFilePath << std::endl;
 #endif // _DEBUG
 
         if (FILESYSTEM_EXISTS(confFilePath)) // Config file exists
         {
 #ifdef _DEBUG
-            std::clog << "Config file " << confFilePath << " exists." << std::endl;
+            std::clog << "main: Config file " << confFilePath << " exists." << std::endl;
 #endif // _DEBUG
-            ConfigHandler ch(confFilePath);
+
+#ifdef WINDOWS_BUILD
+            WindowsConfigHandler ch(confFilePath);
+
+#elif defined(LINUX_BUILD)
+#endif
 
             /* Backup each drive  that's listed in parallel */
             return NORMAL;
@@ -84,7 +94,7 @@ int main(int argc, char* argv[])
 
         else
         {
-            std::cerr << "Config file " << confFilePath << " DNE." << std::endl;
+            std::cerr << "main: Config file " << confFilePath << " DNE." << std::endl;
             return NO_CONFIG_FILE;
         }
     }
