@@ -75,7 +75,18 @@ void ConfigHandler::storeLastBackupTime()
 	char const* dateCStr = dateJSONStr.c_str(); // Get last backup time as a C string
 	std::string dateCPPStr(dateCStr); // Convert it to a  C++ string
 	std::istringstream dateStrm(dateCPPStr); // Populate the stream with the date
-	dateStrm >> std::get_time(&lastBackupTime, "%Y-%m-%d %H:%M:%S"); // Parse the time
+	const char* timeFormatStr = "%Y-%m-%d %H:%M:%S"; // Use the ISO date format followed by the ISO time format.
+	
+	dateStrm.imbue(std::locale(""));
+	dateStrm >> std::get_time(&lastBackupTime, timeFormatStr); // Parse the date when we last ran a backup
+
+#ifdef _DEBUG
+	std::clog << "ConfigHandler::storeLastBackupTime: dateJSONStr = " << dateJSONStr << std::endl
+		<< "\tdateCStr = " << std::quoted(dateCStr) << std::endl
+		<< "\tdateCPPStr = " << std::quoted(dateCPPStr) << std::endl
+		<< "\tdateStrm contents = " << std::quoted(dateStrm.str()) << std::endl << std::endl;
+#endif // DEBUG
+
 
 	if (dateStrm.fail())
 	{
@@ -88,7 +99,7 @@ void ConfigHandler::storeLastBackupTime()
 	else
 	{
 #ifdef _DEBUG
-		std::cerr << "Parsed last backup time as " << std::put_time(&lastBackupTime, "%c") << std::endl;
+		std::cerr << "Parsed last backup time string " << std::quoted(dateCPPStr) << " as " << std::put_time(&lastBackupTime, timeFormatStr) << std::endl;
 #endif // _DEBUG
 	}
 }

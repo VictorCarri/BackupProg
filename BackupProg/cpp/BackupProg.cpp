@@ -20,7 +20,7 @@
 #include "ExitCodes.hpp" // Exit codes
 
 #if defined(WINDOWS_BUILD)
-    #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
+    #include "ConfigHandler/windows/WindowsConfigHandler.hpp" // Configuration handler for Windows
 
 #elif defined(LINUX_BUILD)
 #include "ConfigHandler/LinuxConfigHandler.hpp"
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 #endif // _DEBUG
 
 #ifdef WINDOWS_BUILD
-            WindowsConfigHandler ch(confFilePath);
+            windows::WindowsConfigHandler ch(confFilePath);
 
 #elif defined(LINUX_BUILD)
 #endif
