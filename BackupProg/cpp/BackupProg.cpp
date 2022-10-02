@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     /* Setup positional options */
     boost::program_options::options_description posConvOpts("Options to map positional options to");
     posConvOpts.add_options()
-        ("backup-drive,b", boost::program_options::value<FILESYSTEM_PATH>()->default_value("E:"), "Path to backup drive")
+        ("backup-drive,b", boost::program_options::value<FILESYSTEM_PATH>()->default_value("F:"), "Path to backup drive")
         ("config-file,c", boost::program_options::value<FILESYSTEM_PATH>()->default_value("/config.json"), "Path to config file relative to backup drive");
 
     boost::program_options::positional_options_description posOpts; // Positional options
