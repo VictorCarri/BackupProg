@@ -9,7 +9,7 @@
 * \desc Constructor. Reads the entire JSON file in as a string, then uses Boost.JSON to parse it as JSON and save it.
 * \param confFilePath The path to the config JSON file.
 */
-windows::WindowsConfigHandler::WindowsConfigHandler(FILESYSTEM_PATH confFilePath) : ConfigHandler(confFilePath) // Construct the common variables
+WindowsConfigHandler::WindowsConfigHandler(FILESYSTEM_PATH confFilePath) : ConfigHandler(confFilePath) // Construct the common variables
 {
 	/* Build SkipInfo objects for each drive */
 }
