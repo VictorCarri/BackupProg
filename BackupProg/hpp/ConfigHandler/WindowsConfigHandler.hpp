@@ -7,6 +7,7 @@
 
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
+	#include "bosmacros/regex.hpp" // REGEX
 
 	/* Our headers */
 	#include "ConfigHandler/BaseConfigHandler.hpp" // Base class
@@ -26,7 +27,11 @@
 				ConfigHandler(FILESYSTEM_PATH confFilePath);
 
 			private:
-
+				/*
+				* \desc Converts the given filesystem path to a regex
+				*		Doubles slashes so that the regex parser won't interpret them as the start of an escape sequence.
+				*/
+				REGEX pathToRegex(FILESYSTEM_PATH path);
 		};
 	}
 

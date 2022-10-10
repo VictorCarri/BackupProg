@@ -4,12 +4,14 @@
 	/* Standard C++ */
 	#include <string> // std::string
 	#include <boost/json.hpp> // boost::json::value
+	#include <vector> // std::vector
 
 	/* STL versions of C headers */
 	#include <ctime> // std::tm
 
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH, IFSTREAM
+	#include "bosmacros/regex.hpp" // REGEX
 
 	/*
 	* Parses our JSON config file and stores the value as a JSON object.
