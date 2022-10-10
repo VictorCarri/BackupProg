@@ -18,8 +18,8 @@
 			public:
 				/*
 				* \desc Constructor. Initializes our base class and stores the path we store info about.
-				* \desc skipDirs JSON array of directory paths relative to our backup path that we should skip backing up.
-				* \desc skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
+				* \param skipDirs JSON array of directory paths relative to our backup path that we should skip backing up.
+				* \param skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
 				* \param backupPath The path we store info about.
 				*/
 				BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles);
@@ -30,6 +30,14 @@
 				*		Doubles slashes so that the regex parser won't interpret them as the start of an escape sequence.
 				*/
 				REGEX pathToRegex(FILESYSTEM_PATH path);
+
+				/*
+				* \desc Creates regexes for either directory or file paths that we should skip.
+				* \param forDirs True if we create directory regexes, false if we should create file regexes.
+				* \param skipList List of directories or files that we should skip.
+				* \param backupPath The path this object stores info about.
+				*/
+				void createRegs(bool forDirs, boost::json::array skipList, FILESYSTEM_PATH backupPath);
 		};
 	};
 

@@ -2,7 +2,7 @@
 #define BASEBACKUPPATHINFO_HPP
 
 	/* Standard C++ */
-	#include <vector> // std::vector
+	#include <forward_list> // std::forward_list
 
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
@@ -28,8 +28,8 @@
 
 		protected:
 			FILESYSTEM_PATH pathToBackup; // The path that we store backup information about
-			std::vector<REGEX> dirRegs; // List of regexes that describe directories under this path that we should skip
-			std::vector<REGEX> fileRegs; // List of regexes that describe files under this path that we should skip
+			std::forward_list<REGEX> dirRegs; // List of regexes that describe directories under this path that we should skip
+			std::forward_list<REGEX> fileRegs; // List of regexes that describe files under this path that we should skip
 	};
 
 #endif // BASEBACKUPPATHINFO_HPP

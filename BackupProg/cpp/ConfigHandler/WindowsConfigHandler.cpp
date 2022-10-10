@@ -68,7 +68,7 @@ windows::ConfigHandler::ConfigHandler(FILESYSTEM_PATH confFilePath) : BaseConfig
 			<< "windows::ConfigHandler::ConfigHandler: filesArr = " << filesArr << std::endl << std::endl;
 #endif // _DEBUG
 
-		backupInfo.emplace_back(drivePath, dirsArr, filesArr); // Add a drive path info object in place for this drive
+		backupInfo.emplace_front(drivePath, dirsArr, filesArr); // Add a drive path info object in place for this drive
 
 #ifdef _DEBUG
 		std::clog << "=====================================================================================" << std::endl

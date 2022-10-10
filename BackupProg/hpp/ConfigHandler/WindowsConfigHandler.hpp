@@ -2,8 +2,7 @@
 #define WINDOWSCONFIGHANDLER_HPP
 
 	/* Standard C++ */
-	#include <vector> // std::vector
-	#include <map> // std::map
+	#include <forward_list> // std::forward_list
 
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
@@ -28,7 +27,7 @@
 				ConfigHandler(FILESYSTEM_PATH confFilePath);
 
 			private:
-				std::vector<windows::BackupPathInfo> backupInfo; // List of information objects for each path to back up
+				std::forward_list<windows::BackupPathInfo> backupInfo; // List of information objects for each path to back up
 		};
 	}
 
