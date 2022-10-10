@@ -1,5 +1,5 @@
-#ifndef CONFIGFILEPARSER_HPP
-#define CONFIGFILEPARSER_HPP
+#ifndef BASECONFIGHANDLER_HPP
+#define BASECONFIGHANDLER_HPP
 
 	/* Standard C++ */
 	#include <string> // std::string
@@ -18,14 +18,14 @@
 	* But it verifies the data of each field.
 	* A separate program is needed to actually update the configuration file.
 	*/
-	class ConfigHandler
+	class BaseConfigHandler
 	{
 		public:
 			/*
 			* \desc Constructor. Reads the entire JSON file in as a string, then uses Boost.JSON to parse it as JSON and save it.
 			* \param confFilePath The path to the config JSON file.
 			*/
-			ConfigHandler(FILESYSTEM_PATH confFilePath);
+			BaseConfigHandler(FILESYSTEM_PATH confFilePath);
 
 			/*
 			* \desc Fetches the options we read from the file.
@@ -50,4 +50,4 @@
 			std::tm lastBackupTime; // Holds the last time the backup was run
 	};
 
-#endif //sCONFIGFILEPARSER_HPP
+#endif // BASECONFIGHANDLER_HPP

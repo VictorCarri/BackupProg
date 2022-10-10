@@ -1,15 +1,179 @@
-/* Boost or STL */
+/* Standard C++ */
+#include <iostream> // std::clog
+#include <sstream> // std::ostringstream
+#include <string> // std::string
+
+/* Boost or Standard C++ */
 #include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
+#include "bosmacros/regex.hpp" // REGEX, MATCH_RESULTS
+
+/* Boost */
+#include <boost/json.hpp> // boost::json::value
 
 /* Our headers */
-#include "ConfigHandler/ConfigHandler.hpp" // Base class
-#include "ConfigHandler/windows/WindowsConfigHandler.hpp" // Class def'n
+#include "ConfigHandler/BaseConfigHandler.hpp" // Base class
+#include "ConfigHandler/WindowsConfigHandler.hpp" // Class def'n
 
 /*
 * \desc Constructor. Reads the entire JSON file in as a string, then uses Boost.JSON to parse it as JSON and save it.
 * \param confFilePath The path to the config JSON file.
 */
-WindowsConfigHandler::WindowsConfigHandler(FILESYSTEM_PATH confFilePath) : ConfigHandler(confFilePath) // Construct the common variables
+windows::ConfigHandler::ConfigHandler(FILESYSTEM_PATH confFilePath) : BaseConfigHandler(confFilePath) // Construct the common variables
 {
-	/* Build SkipInfo objects for each drive */
+	boost::json::object optionsObj = options.as_object(); // Get options object
+	boost::json::value backupList = optionsObj["backupList"]; // Get the value of the backup list key
+	boost::json::array backupInfoArr = backupList.as_array(); // Convert the value to an array
+	
+	for (boost::json::value drive : backupInfoArr) // Loop through the objects inside the array of backup info
+	{
+		/* Get the path to back up */
+		boost::json::object driveObj = drive.as_object();
+		boost::json::value backupPathVal = driveObj["backupPath"]; // Path of the drive to back up
+		boost::json::string backupPathJSONStr = backupPathVal.as_string(); // Get the drive path as a JSON string
+		const char* backupPathCStr = backupPathJSONStr.c_str(); // Get it as a C string
+		FILESYSTEM_PATH drivePath(backupPathCStr); // Create a filesystem path that we can put into our map
+		
+#ifdef _DEBUG
+		std::clog << "windows::ConfigHandler::ConfigHandler: drive path = " << drivePath << std::endl;
+#endif // _DEBUG
+
+
+		/* Create the list of paths to skip for this drive */
+		boost::json::value excludeVal = driveObj["exclude"]; // Object containing exclusion info as a value
+
+#ifdef _DEBUG
+		std::clog << "windows::ConfigHandler::ConfigHandler: excludeVal = " << excludeVal << std::endl;
+#endif // _DEBUG
+
+		boost::json::object excludeObj = excludeVal.as_object(); // Convert the value to an object
+		boost::json::value dirsVal = excludeObj["dirs"]; // List of directories to skip
+		boost::json::value filesVal = excludeObj["files"]; // List of files to skip
+
+#ifdef _DEBUG
+		std::clog << "windows::ConfigHandler::ConfigHandler: dirsVal = " << dirsVal << std::endl
+			<< std::endl
+			<< "windows::ConfigHandler::ConfigHandler: filesVal = " << filesVal << std::endl << std::endl;
+#endif // _DEBUG
+
+		/* Get the arrays of directories and files to skip as arrays */
+		boost::json::array dirsArr = dirsVal.as_array();
+		boost::json::array filesArr = filesVal.as_array();
+
+#ifdef _DEBUG
+		std::clog << "windows::ConfigHandler::ConfigHandler: dirsArr = " << dirsArr << std::endl
+			<< std::endl
+			<< "windows::ConfigHandler::ConfigHandler: filesArr = " << filesArr << std::endl << std::endl;
+#endif // _DEBUG
+
+		for (boost::json::value dir : dirsArr) // Create regexes for each directory to skip
+		{
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: dir = " << dir << std::endl;
+#endif // _DEBUG
+
+			/* Get the directory value as a string */
+			boost::json::string dirJSONStr = dir.as_string(); // Get the directory as a JSON string
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: dirJSONStr = " << dirJSONStr << std::endl
+				<< "windows::ConfigHandler::ConfigHandler: dir for: Does the path have a root name? " << (drivePath.has_root_name() ? "Yes" : "No") << std::endl;
+
+			if (drivePath.has_root_name())
+			{
+				std::clog << "windows::ConfigHandler::ConfigHandler: dir for: drivePath's root name = " << drivePath.root_name() << std::endl;
+			}
+
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: Does the path have a root directory? " << (drivePath.has_root_directory() ? "Yes" : "No") << std::endl;
+
+			if (drivePath.has_root_directory())
+			{
+				std::clog << "windows::ConfigHandler::ConfigHandler: dir for: drivePath's root directory = " << drivePath.root_directory() << std::endl;
+			}
+#endif // _DEBUG
+
+			/* We need to add slashes to paths that only have a drive name. I.e., paths that have an empty root directory. */
+			FILESYSTEM_PATH dirPath(drivePath); // Initialize the directory path to the drive path
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: dirPath = " << dirPath << " after initialization." << std::endl;
+#endif // _DEBUG
+
+			if (!drivePath.has_root_directory()) // Just a drive name
+			{
+#ifdef _DEBUG
+				std::clog << "windows::ConfigHandler::ConfigHandler: dir for: no root dir if: drivePath lacks a root directory." << std::endl;
+#endif // _DEBUG
+
+				dirPath += "\\"; // Add slashes to the bare drive name. This provides a root directory before the directory name.
+
+#ifdef _DEBUG
+				std::clog << "windows::ConfigHandler::ConfigHandler: dir for: no root dir if: dirPath = " << dirPath << " after adding slashes." << std::endl;
+#endif // _DEBUG
+			}
+
+			/* Add the directory to the drive path which has been modified if necessary. */
+			FILESYSTEM_PATH dirJSONPathFSPath(dirJSONStr.cbegin(), dirJSONStr.cend()); // Convert the JSON string to a filesystem path
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: dirJSONPathFSPath = " << dirJSONPathFSPath << std::endl;
+#endif // _DEBUG
+
+			dirPath /= dirJSONPathFSPath; // Add the directory name to the drive path
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: dir for: dirPath = " << dirPath << " after appending the directory's name." << std::endl;
+#endif // _DEBUG
+
+#ifdef _DEBUG
+			std::clog << std::endl; // Pretty printing
+#endif // _DEBUG
+
+		}
+
+#ifdef _DEBUG
+		std::clog << "=====================================================================================" << std::endl
+			<< std::endl;
+#endif // _DEBUG
+
+
+		/*for (boost::json::value file : filesArr)
+		{
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: file for: file = " << file << std::endl;
+#endif // _DEBUG
+
+			/* Get the directory value as a string */
+			/*boost::json::string fileJSONStr = file.as_string(); // Get the directory as a JSON string
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: file for: fileJSONStr = " << fileJSONStr << std::endl;
+#endif // _DEBUG
+
+			const char* fileJSONCstr = fileJSONStr.c_str();
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: file for: fileJSONCstr = " << fileJSONCstr << std::endl;
+#endif // _DEBUG
+
+			/* Create a path to skip */
+			/*FILESYSTEM_PATH skipPath = drivePath; // Start with the backup path
+			skipPath += "\\"; // Need to add a second slash for regex
+			skipPath /= fileJSONCstr; // Add the path of this folder
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: file for: skipPath = " << skipPath << std::endl;
+#endif // _DEBUG
+
+
+			/* Convert the path to a regex */
+			/*std::ostringstream regConvSS;
+			regConvSS << "^" << skipPath.string() << "$"; // Create a regex that checks for a stirng that starts w/ the dir. name and ends w/ anything
+
+#ifdef _DEBUG
+			std::clog << "windows::ConfigHandler::ConfigHandler: file for : regex to store is \"" << regConvSS.str() << "\"" << std::endl
+				<< "------------------------------------------------------------------------" << std::endl <<
+				std::endl;
+#endif // _DEBUG
+		}*/
+	}
 }

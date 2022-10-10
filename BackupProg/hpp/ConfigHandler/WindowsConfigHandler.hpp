@@ -1,18 +1,22 @@
 #ifndef WINDOWSCONFIGHANDLER_HPP
 #define WINDOWSCONFIGHANDLER_HPP
 
+	/* Standard C++ */
+	#include <vector> // std::vector
+	#include <map> // std::map
+
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH
 
 	/* Our headers */
-	#include "ConfigHandler/ConfigHandler.hpp" // Base class
+	#include "ConfigHandler/BaseConfigHandler.hpp" // Base class
 
 	namespace windows
 	{
 		/*
-		* A configuration file handler that's specialized to handle Windows configuration.
+		* A configuration file handler that's specialized to handle backup Windows configuration for Windows.
 		*/
-		class ConfigHandler : public ConfigHandler
+		class ConfigHandler : public BaseConfigHandler
 		{
 			public:
 				/*
@@ -20,6 +24,9 @@
 				* \param confFilePath The path to the config JSON file.
 				*/
 				ConfigHandler(FILESYSTEM_PATH confFilePath);
+
+			private:
+
 		};
 	}
 
