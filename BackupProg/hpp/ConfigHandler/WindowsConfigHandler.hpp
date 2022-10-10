@@ -11,6 +11,7 @@
 
 	/* Our headers */
 	#include "ConfigHandler/BaseConfigHandler.hpp" // Base class
+	#include "BackupPathInfo/WindowsBackupPathInfo.hpp" // Windows backup info object
 
 	namespace windows
 	{
@@ -27,11 +28,7 @@
 				ConfigHandler(FILESYSTEM_PATH confFilePath);
 
 			private:
-				/*
-				* \desc Converts the given filesystem path to a regex
-				*		Doubles slashes so that the regex parser won't interpret them as the start of an escape sequence.
-				*/
-				REGEX pathToRegex(FILESYSTEM_PATH path);
+				std::vector<windows::BackupPathInfo> backupInfo; // List of information objects for each path to back up
 		};
 	}
 
