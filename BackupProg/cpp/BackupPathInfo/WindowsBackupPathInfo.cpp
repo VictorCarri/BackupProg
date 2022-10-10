@@ -65,7 +65,7 @@ REGEX windows::BackupPathInfo::pathToRegex(FILESYSTEM_PATH path)
 	// so that we can pass the string to the regex engine. The regex engine will interpret each pair of backslashes as a literal backslash.
 
 #ifdef _DEBUG
-	std::clog << "windows::BackupPathInfo::pathToRegex: pathWithDoubleBackslashes = " << pathWithDoubleBackslashes << std::endl;
+	std::clog << "windows::BackupPathInfo::pathToRegex: pathWithDoubleBackslashes (pathReg) = " << pathWithDoubleBackslashes << std::endl;
 #endif // _DEBUG
 
 #ifdef _DEBUG
