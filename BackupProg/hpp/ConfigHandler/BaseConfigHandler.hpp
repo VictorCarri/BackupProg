@@ -1,15 +1,17 @@
-#ifndef CONFIGFILEPARSER_HPP
-#define CONFIGFILEPARSER_HPP
+#ifndef BASECONFIGHANDLER_HPP
+#define BASECONFIGHANDLER_HPP
 
 	/* Standard C++ */
 	#include <string> // std::string
 	#include <boost/json.hpp> // boost::json::value
+	#include <vector> // std::vector
 
 	/* STL versions of C headers */
 	#include <ctime> // std::tm
 
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH, IFSTREAM
+	#include "bosmacros/regex.hpp" // REGEX
 
 	/*
 	* Parses our JSON config file and stores the value as a JSON object.
@@ -18,14 +20,14 @@
 	* But it verifies the data of each field.
 	* A separate program is needed to actually update the configuration file.
 	*/
-	class ConfigHandler
+	class BaseConfigHandler
 	{
 		public:
 			/*
 			* \desc Constructor. Reads the entire JSON file in as a string, then uses Boost.JSON to parse it as JSON and save it.
 			* \param confFilePath The path to the config JSON file.
 			*/
-			ConfigHandler(FILESYSTEM_PATH confFilePath);
+			BaseConfigHandler(FILESYSTEM_PATH confFilePath);
 
 			/*
 			* \desc Fetches the options we read from the file.
@@ -33,7 +35,7 @@
 			*/
 			boost::json::value getOpts() const;
 
-		private:
+		protected:
 			/*
 			* \desc Converts the last backup time stored in the JSON into a C++ time point.
 			*/
@@ -50,4 +52,4 @@
 			std::tm lastBackupTime; // Holds the last time the backup was run
 	};
 
-#endif //sCONFIGFILEPARSER_HPP
+#endif // BASECONFIGHANDLER_HPP
