@@ -10,7 +10,8 @@
 
 	/* Our headers */
 	#include "ConfigHandler/BaseConfigHandler.hpp" // Base class
-	#include "BackupPathInfo/WindowsBackupPathInfo.hpp" // Windows backup info object
+	#include "BackupInfoList/BaseBackupInfoList.hpp" // Base class of backup info
+	#include "BackupInfoList/WindowsBackupInfoList.hpp" // Windows backup info list class
 
 	namespace windows
 	{
@@ -26,8 +27,14 @@
 				*/
 				ConfigHandler(FILESYSTEM_PATH confFilePath);
 
+				/*
+				* \desc Fetches the list of objects that contain info about each path that we should backup.
+				* \returns The list of objects that contain info about each path that we should backup.
+				*/
+				const windows::BackupInfoList* getBackupInfoList() const override;
+
 			private:
-				std::forward_list<windows::BackupPathInfo> backupInfo; // List of information objects for each path to back up
+				windows::BackupInfoList backupInfoList; // List of information objects for each path to back up
 		};
 	}
 

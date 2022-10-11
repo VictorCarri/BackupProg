@@ -15,6 +15,7 @@
 /* Our headers */
 #include "ConfigHandler/BaseConfigHandler.hpp" // Base class
 #include "ConfigHandler/WindowsConfigHandler.hpp" // Class def'n
+#include "BackupPathInfo/BaseBackupPathInfo.hpp" // Base backup path info class
 #include "BackupPathInfo/WindowsBackupPathInfo.hpp" // Windows-specific backup info class
 
 /*
@@ -68,11 +69,20 @@ windows::ConfigHandler::ConfigHandler(FILESYSTEM_PATH confFilePath) : BaseConfig
 			<< "windows::ConfigHandler::ConfigHandler: filesArr = " << filesArr << std::endl << std::endl;
 #endif // _DEBUG
 
-		backupInfo.emplace_front(drivePath, dirsArr, filesArr); // Add a drive path info object in place for this drive
+		backupInfoList.emplace(drivePath, dirsArr, filesArr); // Add a drive path info object in place for this drive
 
 #ifdef _DEBUG
 		std::clog << "=====================================================================================" << std::endl
 			<< std::endl;
 #endif // _DEBUG
 	}
+}
+
+/*
+* \desc Fetches the list of objects that contain info about each path that we should backup.
+* \returns The list of objects that contain info about each path that we should backup.
+*/
+const windows::BackupInfoList* windows::ConfigHandler::getBackupInfoList() const
+{
+	return &backupInfoList; // Return our Windows-specific backup list
 }

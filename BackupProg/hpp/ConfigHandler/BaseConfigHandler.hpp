@@ -5,6 +5,7 @@
 	#include <string> // std::string
 	#include <boost/json.hpp> // boost::json::value
 	#include <vector> // std::vector
+	#include <forward_list> // std::forward_list
 
 	/* STL versions of C headers */
 	#include <ctime> // std::tm
@@ -12,6 +13,9 @@
 	/* Boost or STL */
 	#include "bosmacros/filesystem.hpp" // FILESYSTEM_PATH, IFSTREAM
 	#include "bosmacros/regex.hpp" // REGEX
+
+	/* Our headers */
+	#include "BackupInfoList/BaseBackupInfoList.hpp" // Base class for backup info lists
 
 	/*
 	* Parses our JSON config file and stores the value as a JSON object.
@@ -35,6 +39,17 @@
 			*/
 			boost::json::value getOpts() const;
 
+			/*
+			* \desc Fetches the list of objects that contain info about each path that we should backup.
+			* \returns The list of objects that contain info about each path that we should backup.
+			*/
+			virtual const BaseBackupInfoList* getBackupInfoList() const;
+
+			/*
+			* \desc Default virtual destructor, just in case.
+			*/
+			virtual ~BaseConfigHandler() = default;
+
 		protected:
 			/*
 			* \desc Converts the last backup time stored in the JSON into a C++ time point.
@@ -50,6 +65,7 @@
 			std::string fConts; // Holds the JSON as a string for Boost.JSON
 			boost::json::value options; // Our options
 			std::tm lastBackupTime; // Holds the last time the backup was run
+			BaseBackupInfoList backupInfoList; // The list of backup info objects
 	};
 
 #endif // BASECONFIGHANDLER_HPP
