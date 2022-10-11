@@ -1,1 +1,0 @@
-#include "CopyListCreator/BaseCopyListCreator.hpp" // Class def'n

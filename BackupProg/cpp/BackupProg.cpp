@@ -8,6 +8,8 @@
 #include <iostream> // std::cout, std::cerr
 #include <string> // std::string
 #include <stdexcept> // std::runtime_error
+#include <algorithm> // std::transform
+#include <iterator> // std::front_inserter
 
 /* Boost */
 #include <boost/program_options.hpp> // boost::program_options::options_description,  boost::program_options::positional_options_description, boost::program_options::store, boost::program_options::command_line_parser, boost::program_options::notify, boost::program_options::value
@@ -17,10 +19,11 @@
 
 /* Our headers */
 #include "ExitCodes.hpp" // Exit codes
+#include "BackupInfoList/BaseBackupInfoList.hpp" // Base class for backup info lists
 
 #if defined(WINDOWS_BUILD)
     #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
-    #include "CopyListCreator/WindowsCopyListCreator.hpp" // Copy list creator task object for Windows
+    #include "BackupInfoList/WindowsBackupInfoList.hpp" // Backup info list class for Windows
 
 #elif defined(LINUX_BUILD)
 #include "ConfigHandler/LinuxConfigHandler.hpp"
@@ -84,7 +87,17 @@ int main(int argc, char* argv[])
 
 #ifdef WINDOWS_BUILD
             windows::ConfigHandler ch(confFilePath); // Parse our config file and load the lists of directories and files to skip
-            windows::CopyListCreator clc; // Create a task object that will create the list of directories and files to copy
+            const windows::BackupInfoList* backupInfoList = ch.getBackupInfoList(); // Turn it back into a Windows-specific class
+            std::forward_list<int> testList;
+            std::transform(backupInfoList->cbegin(), backupInfoList->cend(), std::front_inserter(testList), [](const windows::BackupInfoList::value_type backupPathInfo) -> int
+                {
+#ifdef _DEBUG
+                    std::clog << "main: Backup path: " << backupPathInfo.getPathToBackup() << std::endl;
+#endif // _DEBUG
+
+                    return 1;
+                }
+            );
 
 #elif defined(LINUX_BUILD)
 #endif

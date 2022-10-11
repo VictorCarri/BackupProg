@@ -103,3 +103,12 @@ void BaseConfigHandler::storeLastBackupTime()
 #endif // _DEBUG
 	}
 }
+
+/*
+* \desc Fetches the list of objects that contain info about each path that we should backup.
+* \returns The list of objects that contain info about each path that we should backup.
+*/
+const BaseBackupInfoList* BaseConfigHandler::getBackupInfoList() const
+{
+	return &backupInfoList;
+}

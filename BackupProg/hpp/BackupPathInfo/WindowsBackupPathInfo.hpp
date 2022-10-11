@@ -1,5 +1,5 @@
-#ifndef WINDOWSBACKUPPATHINFO_HPP
-#define WINDOWSBACKUPPATHINFO_HPP
+#ifndef WINDOWS_BACKUPPATHINFO_HPP
+#define WINDOWS_BACKUPPATHINFO_HPP
 
 	/* Boost */
 	#include <boost/json.hpp> // boost::json::array
@@ -18,9 +18,9 @@
 			public:
 				/*
 				* \desc Constructor. Initializes our base class and stores the path we store info about.
+				* \param backupPath The path we store info about.
 				* \param skipDirs JSON array of directory paths relative to our backup path that we should skip backing up.
 				* \param skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
-				* \param backupPath The path we store info about.
 				*/
 				BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles);
 
@@ -35,10 +35,9 @@
 				* \desc Creates regexes for either directory or file paths that we should skip.
 				* \param forDirs True if we create directory regexes, false if we should create file regexes.
 				* \param skipList List of directories or files that we should skip.
-				* \param backupPath The path this object stores info about.
 				*/
-				void createRegs(bool forDirs, boost::json::array skipList, FILESYSTEM_PATH backupPath);
+				void createRegs(bool forDirs, boost::json::array skipList);
 		};
 	};
 
-#endif // !WINDOWSBACKUPPATHINFO_HPP
+#endif // WINDOWS_BACKUPPATHINFO_HPP

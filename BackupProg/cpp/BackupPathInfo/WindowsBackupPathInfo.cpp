@@ -19,11 +19,11 @@
 * \param skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
 * \param backupPath The path we store info about.
 */
-windows::BackupPathInfo::BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles) : BaseBackupPathInfo(backupPath) // Initialize my base class
+windows::BackupPathInfo::BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles) : BaseBackupPathInfo(backupPath, skipDirs, skipFiles) // Initialize my base class
 {
 	/* Build our list of regexes that describe which directories and files under this path we should skip */
-	createRegs(true, skipDirs, backupPath); // Build the list of directories to skip
-	createRegs(false, skipFiles, backupPath); // Build the list of files to skip
+	createRegs(true, skipDirs); // Build the list of directories to skip
+	createRegs(false, skipFiles); // Build the list of files to skip
 }
 
 /*
@@ -81,9 +81,8 @@ REGEX windows::BackupPathInfo::pathToRegex(FILESYSTEM_PATH path)
 * \desc Creates regexes for either directory or file paths that we should skip.
 * \param forDirs True if we create directory regexes, false if we should create file regexes.
 * \param skipList List of directories or files that we should skip.
-* \param backupPath The path this object stores info about.
 */
-void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipList, FILESYSTEM_PATH backupPath)
+void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipList)
 {
 	for (boost::json::value item : skipList) // Create regexes for each directory to skip
 	{
@@ -95,39 +94,39 @@ void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipLi
 		boost::json::string jsonStr = item.as_string(); // Get the directory as a JSON string
 
 #ifdef _DEBUG
-		std::clog << "windows::BackupPathInfo::createRegs: jsonStr = " << jsonStr << std::endl
-			<< "windows::BackupPathInfo::createRegs: Does the path have a root name? " << (backupPath.has_root_name() ? "Yes" : "No") << std::endl;
+		std::clog << "windows::pathToBackupInfo::createRegs: jsonStr = " << jsonStr << std::endl
+			<< "windows::pathToBackupInfo::createRegs: Does the path have a root name? " << (pathToBackup.has_root_name() ? "Yes" : "No") << std::endl;
 
-		if (backupPath.has_root_name())
+		if (pathToBackup.has_root_name())
 		{
-			std::clog << "windows::BackupPathInfo::createRegs: for: backupPath's root name = " << backupPath.root_name() << std::endl;
+			std::clog << "windows::pathToBackupInfo::createRegs: for: pathToBackup's root name = " << pathToBackup.root_name() << std::endl;
 		}
 
-		std::clog << "windows::BackupPathInfo::createRegs: for: Does the path have a root directory? " << (backupPath.has_root_directory() ? "Yes" : "No") << std::endl;
+		std::clog << "windows::pathToBackupInfo::createRegs: for: Does the path have a root directory? " << (pathToBackup.has_root_directory() ? "Yes" : "No") << std::endl;
 
-		if (backupPath.has_root_directory())
+		if (pathToBackup.has_root_directory())
 		{
-			std::clog << "windows::BackupPathInfo::createRegs: for: backupPath's root directory = " << backupPath.root_directory() << std::endl;
+			std::clog << "windows::pathToBackupInfo::createRegs: for: pathToBackup's root directory = " << pathToBackup.root_directory() << std::endl;
 		}
 #endif // _DEBUG
 
 		/* We need to add slashes to paths that only have a drive name. I.e., paths that have an empty root directory. */
-		FILESYSTEM_PATH entryPath(backupPath); // Initialize the directory path to the drive path
+		FILESYSTEM_PATH entryPath(pathToBackup); // Initialize the directory path to the drive path
 
 #ifdef _DEBUG
-		std::clog << "windows::BackupPathInfo::createRegs: dirPath = " << entryPath << " after initialization." << std::endl;
+		std::clog << "windows::pathToBackupInfo::createRegs: dirPath = " << entryPath << " after initialization." << std::endl;
 #endif // _DEBUG
 
-		if (!backupPath.has_root_directory()) // Just a drive name
+		if (!pathToBackup.has_root_directory()) // Just a drive name
 		{
 #ifdef _DEBUG
-			std::clog << "windows::BackupPathInfo::createRegs: no root dir if: backupPath lacks a root directory." << std::endl;
+			std::clog << "windows::pathToBackupInfo::createRegs: no root dir if: pathToBackup lacks a root directory." << std::endl;
 #endif // _DEBUG
 
 			entryPath += "\\"; // Add slashes to the bare drive name. This provides a root directory before the directory name.
 
 #ifdef _DEBUG
-			std::clog << "windows::BackupPathInfo::createRegs: no root dir if: entryPath = " << entryPath << " after adding slashes." << std::endl;
+			std::clog << "windows::pathToBackupInfo::createRegs: no root dir if: entryPath = " << entryPath << " after adding slashes." << std::endl;
 #endif // _DEBUG
 		}
 
@@ -135,13 +134,13 @@ void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipLi
 		FILESYSTEM_PATH entryFSPath(jsonStr.cbegin(), jsonStr.cend()); // Convert the JSON string to a filesystem path
 
 #ifdef _DEBUG
-		std::clog << "windows::BackupPathInfo::createRegs: entryFSPath = " << entryFSPath << std::endl;
+		std::clog << "windows::pathToBackupInfo::createRegs: entryFSPath = " << entryFSPath << std::endl;
 #endif // _DEBUG
 
 		entryPath /= entryFSPath; // Add the directory name to the drive path
 
 #ifdef _DEBUG
-		std::clog << "windows::BackupPathInfo::createRegs: dirPath = " << entryPath << " after appending the directory's name." << std::endl;
+		std::clog << "windows::pathToBackupInfo::createRegs: dirPath = " << entryPath << " after appending the directory's name." << std::endl;
 #endif // _DEBUG
 
 #ifdef _DEBUG
