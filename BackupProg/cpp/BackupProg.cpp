@@ -20,7 +20,6 @@
 
 #if defined(WINDOWS_BUILD)
     #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
-    #include "CopyListCreator/WindowsCopyListCreator.hpp" // Copy list creator task object for Windows
 
 #elif defined(LINUX_BUILD)
 #include "ConfigHandler/LinuxConfigHandler.hpp"
@@ -84,7 +83,6 @@ int main(int argc, char* argv[])
 
 #ifdef WINDOWS_BUILD
             windows::ConfigHandler ch(confFilePath); // Parse our config file and load the lists of directories and files to skip
-            windows::CopyListCreator clc; // Create a task object that will create the list of directories and files to copy
 
 #elif defined(LINUX_BUILD)
 #endif
