@@ -8,7 +8,6 @@
 #include <iostream> // std::cout, std::cerr
 #include <string> // std::string
 #include <stdexcept> // std::runtime_error
-#include <vector> // std::vector
 
 /* Boost */
 #include <boost/program_options.hpp> // boost::program_options::options_description,  boost::program_options::positional_options_description, boost::program_options::store, boost::program_options::command_line_parser, boost::program_options::notify, boost::program_options::value
@@ -21,6 +20,7 @@
 
 #if defined(WINDOWS_BUILD)
     #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
+    #include "CopyListCreator/WindowsCopyListCreator.hpp" // Copy list creator task object for Windows
 
 #elif defined(LINUX_BUILD)
 #include "ConfigHandler/LinuxConfigHandler.hpp"
@@ -44,8 +44,8 @@ int main(int argc, char* argv[])
     /* Setup positional options */
     boost::program_options::options_description posConvOpts("Options to map positional options to");
     posConvOpts.add_options()
-        ("backup-drive,b", boost::program_options::value<FILESYSTEM_PATH>()->default_value("D:"), "Path to backup drive")
-        ("config-file,c", boost::program_options::value<FILESYSTEM_PATH>()->default_value("/Data/config.json"), "Path to config file relative to backup drive");
+        ("backup-drive,b", boost::program_options::value<FILESYSTEM_PATH>()->default_value("F:"), "Path to backup drive")
+        ("config-file,c", boost::program_options::value<FILESYSTEM_PATH>()->default_value("/config.json"), "Path to config file relative to backup drive");
 
     boost::program_options::positional_options_description posOpts; // Positional options
     posOpts.add("backup-drive", 1); // The path to the backup drive
@@ -83,7 +83,8 @@ int main(int argc, char* argv[])
 #endif // _DEBUG
 
 #ifdef WINDOWS_BUILD
-            windows::ConfigHandler ch(confFilePath);
+            windows::ConfigHandler ch(confFilePath); // Parse our config file and load the lists of directories and files to skip
+            windows::CopyListCreator clc; // Create a task object that will create the list of directories and files to copy
 
 #elif defined(LINUX_BUILD)
 #endif
