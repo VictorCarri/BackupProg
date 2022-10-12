@@ -21,6 +21,7 @@
 #if defined(WINDOWS_BUILD)
     #include "ConfigHandler/WindowsConfigHandler.hpp" // Configuration handler for Windows
     #include "BackupInfoList/WindowsBackupInfoList.hpp" // Backup info list class for Windows
+    #include "BackupHandler/WindowsBackupHandler.hpp" // Backup handler for Windows
 
 #elif defined(LINUX_BUILD)
 #include "ConfigHandler/LinuxConfigHandler.hpp"
@@ -85,11 +86,16 @@ int main(int argc, char* argv[])
 #ifdef WINDOWS_BUILD
             windows::ConfigHandler ch(confFilePath); // Parse our config file and load the lists of directories and files to skip
             const windows::BackupInfoList* backupInfoList = ch.getBackupInfoList(); // Turn it back into a Windows-specific class
-
-#elif defined(LINUX_BUILD)
-#endif
+            const windows::BackupHandler bh(*backupInfoList); // Create an object that will handle the backup
 
             /* Backup each drive  that's listed in parallel */
+
+#elif defined(OPENSUSE_BUILD)
+
+#else
+#error "Sorry, but the backup program is only designed to work on Windows and openSUSE. Maybe you could extend it!"
+#endif
+
             return NORMAL;
         }
 
