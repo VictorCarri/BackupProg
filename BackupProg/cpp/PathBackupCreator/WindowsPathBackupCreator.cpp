@@ -2,7 +2,10 @@
 #ifdef _DEBUG
 #include <iostream> // std::clog
 #endif // _DEBUG
+#include <algorithm> // for_each
 
+/* Boost or Standard C++ */
+#include "bosmacros/filesystem.hpp" // RECURSIVE_DIRECTORY_ITERATOR, DIRECTORY_OPTIONS
 
 /* Our headers */
 #include "BackupPathInfo/WindowsBackupPathInfo.hpp" // Class that holds information about how to backup a particular path on Windows
@@ -27,4 +30,8 @@ void windows::PathBackupCreator::operator()()
 	std::clog << "windows::PathBackupCreator::operator(): backing up path " << ourPathInfo.getPathToBackup() << std::endl;
 #endif // _DEBUG
 
+	RECURSIVE_DIRECTORY_ITERATOR endIt; // Default construct the iterator to create an end iterator
+	DIRECTORY_OPTIONS iterOpts = DIRECTORY_OPTIONS::follow_directory_symlink | DIRECTORY_OPTIONS::skip_permission_denied; // Follow all files, except those for which we'd be denied permission
+	RECURSIVE_DIRECTORY_ITERATOR startIt(ourPathInfo.getPathToBackup(), iterOpts);
+	//std::for_each();
 }
