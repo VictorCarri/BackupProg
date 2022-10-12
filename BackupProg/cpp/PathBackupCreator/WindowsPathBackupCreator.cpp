@@ -32,6 +32,13 @@ void windows::PathBackupCreator::operator()()
 
 	RECURSIVE_DIRECTORY_ITERATOR endIt; // Default construct the iterator to create an end iterator
 	DIRECTORY_OPTIONS iterOpts = DIRECTORY_OPTIONS::follow_directory_symlink | DIRECTORY_OPTIONS::skip_permission_denied; // Follow all files, except those for which we'd be denied permission
-	RECURSIVE_DIRECTORY_ITERATOR startIt(ourPathInfo.getPathToBackup(), iterOpts);
-	//std::for_each();
+	RECURSIVE_DIRECTORY_ITERATOR startIt(ourPathInfo.getPathToBackup(), iterOpts); // Start the iteration at our path, using the options we just set.
+	std::for_each(startIt, endIt, [this](DIRECTORY_ENTRY dirEnt) // Check each directory entry
+		{
+			FILESYSTEM_PATH entPath = dirEnt.path(); // Get the entry's path
+#ifdef _DEBUG
+			std::clog << entPath << std::endl;
+#endif // _DEBUG
+		}
+	);
 }
