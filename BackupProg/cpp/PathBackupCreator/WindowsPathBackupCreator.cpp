@@ -30,9 +30,13 @@ void windows::PathBackupCreator::operator()()
 	std::clog << "windows::PathBackupCreator::operator(): backing up path " << ourPathInfo.getPathToBackup() << std::endl;
 #endif // _DEBUG
 
-	RECURSIVE_DIRECTORY_ITERATOR endIt; // Default construct the iterator to create an end iterator
+	/*
+	* Part 1: Build a list of the directories which we'll back up.
+	* Iterate over all of the top-level directories, and only store the ones that *don't* match any of the ones we're supposed to skip.
+	*/
+	DIRECTORY_ITERATOR endIt; // Default construct the iterator to create an end iterator
 	DIRECTORY_OPTIONS iterOpts = DIRECTORY_OPTIONS::follow_directory_symlink | DIRECTORY_OPTIONS::skip_permission_denied; // Follow all files, except those for which we'd be denied permission
-	RECURSIVE_DIRECTORY_ITERATOR startIt(ourPathInfo.getPathToBackup(), iterOpts); // Start the iteration at our path, using the options we just set.
+	DIRECTORY_ITERATOR startIt(ourPathInfo.getPathToBackup(), iterOpts); // Start the iteration at our path, using the options we just set. We use a regular directory iterator to avoid recursing into directories, because that takes too long and then crashes.
 	std::for_each(startIt, endIt, [this](DIRECTORY_ENTRY dirEnt) // Check each directory entry
 		{
 			FILESYSTEM_PATH entPath = dirEnt.path(); // Get the entry's path

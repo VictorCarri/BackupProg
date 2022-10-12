@@ -21,10 +21,9 @@
 			/*
 			* \desc Constructor. Stores the path which we store info about.
 			* \param backupPath The path which we store info about.
-			* \param skipDirs JSON array of directory paths relative to our backup path that we should skip backing up.
 			* \param skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
 			*/
-			BaseBackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles);
+			BaseBackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipFiles);
 
 			/*
 			* \desc Fetches the path whose backup info we describe.
@@ -47,7 +46,6 @@
 
 		protected:
 			FILESYSTEM_PATH pathToBackup; // The path that we store backup information about
-			std::forward_list<REGEX> dirRegs; // List of regexes that describe directories under this path that we should skip
 			std::forward_list<REGEX> fileRegs; // List of regexes that describe files under this path that we should skip
 	};
 

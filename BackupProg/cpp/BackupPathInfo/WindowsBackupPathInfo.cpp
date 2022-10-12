@@ -15,14 +15,12 @@
 
 /*
 * \desc Constructor. Initializes our base class and stores the path we store info about.
-* \param skipDirs JSON array of directory paths relative to our backup path that we should skip backing up.
 * \param skipFiles JSON array of file paths relative to our backup path that we should skip backing up.
 * \param backupPath The path we store info about.
 */
-windows::BackupPathInfo::BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipDirs, boost::json::array skipFiles) : BaseBackupPathInfo(backupPath, skipDirs, skipFiles) // Initialize my base class
+windows::BackupPathInfo::BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipFiles) : BaseBackupPathInfo(backupPath, skipFiles) // Initialize my base class
 {
 	/* Build our list of regexes that describe which directories and files under this path we should skip */
-	createRegs(true, skipDirs); // Build the list of directories to skip
 	createRegs(false, skipFiles); // Build the list of files to skip
 }
 
@@ -79,10 +77,9 @@ REGEX windows::BackupPathInfo::pathToRegex(FILESYSTEM_PATH path)
 
 /*
 * \desc Creates regexes for either directory or file paths that we should skip.
-* \param forDirs True if we create directory regexes, false if we should create file regexes.
 * \param skipList List of directories or files that we should skip.
 */
-void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipList)
+void windows::BackupPathInfo::createRegs(boost::json::array skipList)
 {
 	for (boost::json::value item : skipList) // Create regexes for each directory to skip
 	{
@@ -148,15 +145,6 @@ void windows::BackupPathInfo::createRegs(bool forDirs, boost::json::array skipLi
 #endif // _DEBUG
 
 		REGEX escapedReg = pathToRegex(entryPath); // Escape the backslashes in the path so that we can get the regex engine to recognize literal backslashes
-
-		if (forDirs) // We're building the list of *directories* that we should skip
-		{
-			dirRegs.emplace_front(escapedReg); // Add this regex to the list of regexes that match directories that we should skip
-		}
-
-		else // File regex
-		{
-			fileRegs.emplace_front(escapedReg);
-		}
+		fileRegs.emplace_front(escapedReg); // Store the new regex
 	}
 }
