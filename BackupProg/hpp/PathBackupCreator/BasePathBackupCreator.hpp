@@ -1,0 +1,8 @@
+#ifndef BASEPATHBACKUPCREATOR_HPP
+#define BASEPATHBACKUPCREATOR_HPP
+
+#endif // BASEPATHBACKUPCREATOR_HPP
+
+class BasePathBackupCreator
+{
+};
