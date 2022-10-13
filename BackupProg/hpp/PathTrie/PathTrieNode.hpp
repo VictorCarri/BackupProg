@@ -4,6 +4,10 @@
 /* Standard C++ */
 #include <forward_list> // std::forward_list
 #include <memory> // std::shared_ptr
+#include <ostream> // std::ostream
+
+/* Our headers */
+#include "PathTrie/NodeComp.hpp" // Node comparison functor
 
 #define TRIE_ALPHABET_SIZE 256 // We only allow ASCII or UTF-8 paths
 
@@ -23,8 +27,10 @@ namespace pathTrie
 
 			/*
 			* \desc Constructs a Node that contains the given character.
+			* \param c The character this Node should store.
+			* \param d The Node's depth in the tree
 			*/
-			Node(char c);
+			Node(char c, int d);
 
 			/*
 			* \desc Tells the caller whether this node is a leaf in the trie or not.
@@ -46,14 +52,6 @@ namespace pathTrie
 			bool hasChild(char c) const;
 
 			/*
-			* \desc Less-than operator. We need to define this to enable comparison, and thus sorting and searching.
-			* \param left The left Node to compare.
-			* \param right The Node on the right of the comparison.
-			* \returns True if the Node on the left has a character that's < the character that the Node on the right has, false otherwise.
-			*/
-			friend bool operator<(const Node& left, const Node& right);
-
-			/*
 			* \desc Fetches a pointer to the node which stores the given character.
 			* \assumption This Node has a child which stores this character.
 			* \param c The character to check for.
@@ -62,12 +60,19 @@ namespace pathTrie
 			std::shared_ptr<Node> getChild(char c);
 
 			/*
-			* \desc Compares 2 Nodes for equality. Note: this *can't* be used to search the trie, because it assumes that no 2 Nodes store the same character. Which is obviously false in a trie.
-			* \param left The left Node to compare.
-			* \param right The right Node to compare.
-			* \returns True if the 2 Nodes store the same character, false otherwise.
+			* \desc Adds a new child Node that stores the given character.
+			* \param c The character that this Node stores.
+			* \throws std::runtime_error If something fails
 			*/
-			friend bool operator==(const Node& left, const Node& right);
+			void addChild(char c);
+
+			/*
+			* \desc Stream insertion operator that prints the Node.
+			* \param out The stream to write to.
+			* \param n The Node to print.
+			* \returns The stream, to enable chaining.
+			*/
+			friend std::ostream& operator<<(std::ostream& out, const Node n);
 
 		private:
 			char data; // A single ASCII/UTF-8 value
@@ -77,6 +82,8 @@ namespace pathTrie
 			* part of memory, rather than Nodes holding Nodes holding Nodes etc... That would lead to us using huge amounts of memory.
 			*/
 			std::forward_list<std::shared_ptr<Node>> children;
+			short depth; // This Node's depth in the trie
+			NodeComp comparer; // Compares 2 Nodes. For use with algorithms.
 	};
 };
 

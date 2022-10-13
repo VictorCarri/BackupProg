@@ -30,7 +30,29 @@ namespace pathTrie
 			*/
 			Trie();
 
+			/*
+			* \desc Checks whether this trie stores a string that's a prefix of or equal to the given path.
+			* \param path The path to check.
+			* \returns True if either condition is true, false if both conditions are false.
+			*/
+			bool hasPrefixOrIsEqual(FILESYSTEM_PATH path);
+
 		private:
+
+			/*
+			* \desc Checks whether or not this path exists in the trie.
+			* \param path The path to check.
+			* \returns True if the *entire* path is in the trie, false otherwise.
+			*/
+			bool inTrie(FILESYSTEM_PATH path);
+
+			/*
+			* \desc Checks whether or not a prefix of the given path is in the trie.
+			* \param path The path to check.
+			* \returns True if we reach the bottom of the trie before reaching the end of the path, false otherwise.
+			*/
+			bool prefixInTrie(FILESYSTEM_PATH path);
+
 			std::shared_ptr<Node> root; // The trie's root node
 	};
 };

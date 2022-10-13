@@ -1,5 +1,8 @@
 /* Standard C++ */
 #include <algorithm> // std::binary_search, std::lower_bound
+#include <memory> // std::shared_ptr
+#include <stdexcept> // std::invalid_argument, std::runtime_error
+#include <sstream> // std::ostringstream
 
 /* Our headers */
 #include "PathTrie/PathTrieNode.hpp" // Class definition
@@ -13,10 +16,13 @@ char pathTrie::Node::getData() const
 	return data;
 }
 
+
 /*
 * \desc Constructs a Node that contains the given character.
+* \param c The character this Node should store.
+* \param d The Node's depth in the tree
 */
-pathTrie::Node::Node(char c) : data(c)
+pathTrie::Node::Node(char c, int d) : data(c), depth(d)
 {
 }
 
@@ -40,29 +46,7 @@ bool pathTrie::Node::hasChild(char c) const
 	* ASSUMPTION: The insert operation has already sorted the list of children by character.
 	* So we just need to run a binary search.
 	*/
-	return std::binary_search(children.begin(), children.end(), c); // Search the list of nodes to see if there's one that has the given value.
-}
-
-/*
-* \desc Less-than operator. We need to define this to enable comparison, and thus sorting and searching.
-* \param left The left Node to compare.
-* \param right The Node on the right of the comparison.
-* \returns True if the Node on the left has a character that's < the character that the Node on the right has, false otherwise.
-*/
-bool operator<(const pathTrie::Node& left, const pathTrie::Node& right)
-{
-	return left.getData() < right.getData();
-}
-
-/*
-* \desc Compares 2 Nodes for equality. Note: this *can't* be used to search the trie, because it assumes that no 2 Nodes store the same character. Which is obviously false in a trie.
-* \param left The left Node to compare.
-* \param right The right Node to compare.
-* \returns True if the 2 Nodes store the same character, false otherwise.
-*/
-bool operator==(const pathTrie::Node& left, const pathTrie::Node& right)
-{
-	return left.getData() == right.getData(); // Check whether they store the same character
+	return std::binary_search(children.cbegin(), children.cend(), c, comparer); // Search the list of nodes to see if there's one that has the given value.
 }
 
 /*
@@ -73,5 +57,27 @@ bool operator==(const pathTrie::Node& left, const pathTrie::Node& right)
 */
 std::shared_ptr<pathTrie::Node> pathTrie::Node::getChild(char c)
 {
-	auto 
+	if (hasChild(c)) // Ensure that we have an (immediate) child that contains this character
+	{
+		auto charIt = std::lower_bound(children.cbegin(), children.cend(), c, comparer); // Find the iterator that points to the Node that has this character
+		return *charIt; // Return the pointer to the Node
+	}
+
+	else // Error - bad operation
+	{
+		std::ostringstream ess;
+		ess << "pathTrie::Node::getChild: no child has character " << c << " @ depth " << depth;
+		throw std::invalid_argument(ess.str());
+	}
+}
+
+/*
+* \desc Adds a new child Node that stores the given character.
+* \param c The character that this Node stores.
+* \throws std::runtime_error If something fails
+*/
+void pathTrie::Node::addChild(char c)
+{
+	children.emplace_front(c, depth+1); // Create a new Node that stores the given character at the next lowest depth. Insert it at the front of the list.
+	children.sort(comparer); // Sort the list again so that the next search will work properly
 }
