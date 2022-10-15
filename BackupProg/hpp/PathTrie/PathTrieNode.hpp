@@ -72,7 +72,7 @@ namespace pathTrie
 			* \param n The Node to print.
 			* \returns The stream, to enable chaining.
 			*/
-			friend std::ostream& operator<<(std::ostream& out, const Node n);
+			friend std::ostream& operator<<(std::ostream& out, const Node& n);
 
 		private:
 			char data; // A single ASCII/UTF-8 value

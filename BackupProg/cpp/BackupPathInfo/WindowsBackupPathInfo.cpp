@@ -21,7 +21,7 @@
 windows::BackupPathInfo::BackupPathInfo(FILESYSTEM_PATH backupPath, boost::json::array skipFiles) : BaseBackupPathInfo(backupPath, skipFiles) // Initialize my base class
 {
 	/* Build our list of regexes that describe which directories and files under this path we should skip */
-	createRegs(false, skipFiles); // Build the list of files to skip
+	createRegs(skipFiles); // Build the list of files to skip
 }
 
 /*

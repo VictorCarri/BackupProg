@@ -5,7 +5,7 @@
 #include <cstdlib> // std::exit
 
 /* Standard C++ */
-#include <iostream> // std::cout, std::cerr
+#include <iostream> // std::cout, std::cerr, std::boolalpha
 #include <string> // std::string
 #include <stdexcept> // std::runtime_error
 
@@ -29,8 +29,10 @@
 
 int main(int argc, char* argv[])
 {
+#ifdef _DEBUG
     std::clog << std::boolalpha;
     std::cerr << std::boolalpha;
+#endif // _DEBUG
 
     /* Get our name */
     FILESYSTEM_PATH ourPath(argv[0]);
@@ -91,9 +93,10 @@ int main(int argc, char* argv[])
             /* Backup each drive  that's listed in parallel */
 
 #elif defined(OPENSUSE_BUILD)
+#error "Sorry, but the backup program is only designed to work on Windows and openSUSE. Maybe you could extend it!"
 
 #else
-#error "Sorry, but the backup program is only designed to work on Windows and openSUSE. Maybe you could extend it!"
+#error "Sorry, but the backup program is only designed to work on Windows. Maybe you could extend it!"
 #endif
 
             return NORMAL;

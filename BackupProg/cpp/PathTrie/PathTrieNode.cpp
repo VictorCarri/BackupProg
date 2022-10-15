@@ -3,6 +3,7 @@
 #include <memory> // std::shared_ptr
 #include <stdexcept> // std::invalid_argument, std::runtime_error
 #include <sstream> // std::ostringstream
+#include <iomanip> // std::quoted
 
 /* Our headers */
 #include "PathTrie/PathTrieNode.hpp" // Class definition
@@ -80,4 +81,16 @@ void pathTrie::Node::addChild(char c)
 {
 	children.emplace_front(c, depth+1); // Create a new Node that stores the given character at the next lowest depth. Insert it at the front of the list.
 	children.sort(comparer); // Sort the list again so that the next search will work properly
+}
+
+/*
+* \desc Stream insertion operator that prints the Node.
+* \param out The stream to write to.
+* \param n The Node to print.
+* \returns The stream, to enable chaining.
+*/
+std::ostream& pathTrie::operator<<(std::ostream& out, const pathTrie::Node& n)
+{
+	out << "Node @ depth " << n.depth << " with data ";
+	return out;
 }

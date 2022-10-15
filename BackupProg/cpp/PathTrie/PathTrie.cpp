@@ -94,19 +94,30 @@ bool pathTrie::Trie::hasPrefixOrIsEqual(FILESYSTEM_PATH path)
 bool pathTrie::Trie::inTrie(FILESYSTEM_PATH path)
 {
 	std::string pathStr = path.string(); // Get the path as a string
-#ifdef _DEBUG
-	std::clog << "pathTrie::Trie::inTrie: pathStr = " << std::quoted(pathStr) << std::endl;
-#endif // _DEBUG
-
 	std::shared_ptr<pathTrie::Node> curNode(root); // A pointer to the current node. Initialized as a copy of the pointer to our root node.
 	std::string::size_type curPos = 0; // Current position in the string
 	bool toReturn = false;
 
+#ifdef _DEBUG
+	std::clog << "pathTrie::Trie::inTrie: @ start" << std::endl
+		<< "\tpathStr = " << std::quoted(pathStr) << std::endl
+		<< "\tcurPos = " << curPos << std::endl
+		<< "\ttoReturn = " << toReturn << std::endl;
+#endif // _DEBUG
+
 	while (curNode) // Keep looping until the node pointer becomes a null pointer
 	{
+#ifdef _DEBUG
+		std::clog << "pathTrie::Trie::inTrie: while: curNode = " << *curNode << std::endl;
+#endif // _DEBUG
+
 		/* The checks which we must do differ depending on whether this node is a leaf or not */
 		if (curNode->isLeaf()) // We've reached a leaf node
 		{
+#ifdef _DEBUG
+			std::clog << "pathTrie::Trie::inTrie: the current node is a leaf." << std::endl;
+#endif // _DEBUG
+
 			/*
 			* At this point, there are 2 possibilities.
 			* 1) We've reached the end of the string.
@@ -131,6 +142,10 @@ bool pathTrie::Trie::inTrie(FILESYSTEM_PATH path)
 
 		else // This node has children
 		{
+#ifdef _DEBUG
+			std::clog << "pathTrie::Trie::inTrie: the current node has children." << std::endl;
+#endif // _DEBUG
+
 			/*
 			* 2 possibilities:
 			* 
